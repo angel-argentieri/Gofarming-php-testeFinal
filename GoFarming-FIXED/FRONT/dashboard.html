@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jardim — GoFarming</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="/gofarming/PUBLIC/manifest.json">
+    <!-- PWA Settings -->
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GoFarming">
+    <link rel="apple-touch-icon" href="/gofarming/FRONT/css/Logo.png">
+</head>
+<body class="dashboard-page">
+
+    
+<header class="header" style="position:relative;">
+    <div class="header-brand">
+        <img src="css/Logo.png" alt="GoFarming" class="header-logo">
+        <div class="header-info">
+            
+            <div class="muted" id="saudacao">Olá, Jardineiro</div>
+        </div>
+    </div>
+    <div class="sino-wrap">
+        <button id="sino" class="btn-sino" onclick="alternarPainel()" aria-label="Notificações">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <span id="sino-badge"></span>
+        </button>
+
+        <div id="painel-notificacoes" class="painel-notificacoes">
+            <div class="painel-cabecalho">
+                <span>Notificações</span>
+                <button onclick="marcarTodasLidas()">Marcar todas como lidas</button>
+            </div>
+            <div id="painel-corpo"></div>
+        </div>
+    </div>
+
+    <button onclick="sair()" class="btn-sair">Sair</button>
+</header>
+
+   
+    <main class="page">
+        
+        <div class="summary-card">
+            <div class="summary-title-row">
+                <h3>Seu Jardim</h3>
+                <svg class="icon-purple" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 6-4.5 11-10 11Z"/>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+            </div>
+            <p>Acompanhe o status e regas das suas plantas</p>
+        </div>
+
+     
+        <div id="lista" class="gap">
+            <div class="empty-state">
+                <span>Carregando plantas...</span>
+            </div>
+        </div>
+    </main>
+
+    
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item ativo">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Jardim</span>
+        </a>
+
+        <a href="scan.html" class="nav-scan">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
+        </a>
+
+        <a href="#" class="nav-item" onclick="sair()">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
+            <span>Sair</span>
+        </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/notificacoes.js"></script>
+</body>
+</html>

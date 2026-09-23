@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta — GoFarming</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="/gofarming/PUBLIC/manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GoFarming">
+    <link rel="apple-touch-icon" href="/gofarming/FRONT/css/Logo.png">
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="css/Logo.png" alt="GoFarming" class="auth-logo">
+            <h1 class="auth-title">Criar Conta</h1>
+            <p class="auth-subtitle">Junte-se ao GoFarming e cuide das suas plantas</p>
+        </div>
+
+        <form class="auth-form" onsubmit="cadastrar(); return false;">
+            <div class="input-field">
+                <label for="nome">Nome</label>
+                <input class="input" id="nome" type="text" placeholder="Seu nome completo" required>
+            </div>
+            <div class="input-field">
+                <label for="email">E-mail</label>
+                <input class="input" id="email" type="email" placeholder="seu@email.com" required autocomplete="email">
+            </div>
+            <div class="input-field">
+                <label for="senha">Senha</label>
+                <input class="input" id="senha" type="password" placeholder="••••••••" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Criar conta</button>
+
+            <div class="auth-footer">
+                <span>Já tem uma conta?</span>
+                <a href="login.html">Entrar</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

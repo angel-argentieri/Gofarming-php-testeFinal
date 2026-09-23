@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escanear — GoFarming</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="/gofarming/PUBLIC/manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GoFarming">
+    <link rel="apple-touch-icon" href="/gofarming/FRONT/css/Logo.png">
+    <style>
+        :root {
+            --neon: #b490ff;
+            --neon-glow: rgba(180,144,255,.5);
+            --border: rgba(167,139,250,.25);
+            --text-muted: #8b8b9e;
+        }
+        #camera-area {
+            position:relative; width:100%; aspect-ratio:1;
+            background:#0a0a0a; overflow:hidden; border-radius:20px;
+        }
+        #video,#preview { width:100%; height:100%; object-fit:cover; }
+        #preview { display:none; }
+        .frame { position:absolute; inset:40px; border:none; pointer-events:none; }
+        .frame::before,.frame::after,.frame-b::before,.frame-b::after {
+            content:''; position:absolute; width:28px; height:28px;
+            border-color:var(--neon); border-style:solid;
+        }
+        .frame::before  { top:0;    left:0;  border-width:2px 0 0 2px; border-radius:4px 0 0 0; }
+        .frame::after   { top:0;    right:0; border-width:2px 2px 0 0; border-radius:0 4px 0 0; }
+        .frame-b::before{ bottom:0; left:0;  border-width:0 0 2px 2px; border-radius:0 0 0 4px; }
+        .frame-b::after { bottom:0; right:0; border-width:0 2px 2px 0; border-radius:0 0 4px 0; }
+        .laser {
+            position:absolute; left:40px; right:40px; height:2px;
+            background:var(--neon); opacity:.7; box-shadow:0 0 8px var(--neon);
+            animation:laser 2s ease-in-out infinite;
+        }
+        @keyframes laser { 0%,100%{ top:44px; } 50%{ top:calc(100% - 44px); } }
+        #btn-captura {
+            position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+            width:68px; height:68px; border-radius:50%;
+            background:transparent; border:3px solid var(--neon);
+            box-shadow:0 0 20px var(--neon-glow); cursor:pointer;
+            display:flex; align-items:center; justify-content:center; z-index:10;
+        }
+        #btn-captura::after {
+            content:''; width:50px; height:50px;
+            border-radius:50%; background:var(--neon);
+        }
+        #btn-galeria {
+            position:absolute; bottom:6px; right:24px;
+            width:40px; height:40px; border-radius:50%;
+            background:rgba(13,13,18,.75); border:1px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; z-index:10; backdrop-filter:blur(8px);
+        }
+        #btn-galeria:hover { border-color:var(--neon); transform:scale(1.05); }
+        .spinner {
+            width:36px; height:36px;
+            border:3px solid rgba(180,144,255,.2);
+            border-top-color:var(--neon);
+            border-radius:50%; animation:spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        #resultado { display:none; padding:20px; }
+        .dias-grid { display:flex; gap:6px; flex-wrap:wrap; }
+        .dia-btn {
+            flex:1; min-width:40px;
+            background:#111; border:1px solid var(--border);
+            border-radius:12px; color:#8b8b9e;
+            padding:10px 0; font-size:12px; font-weight:600;
+            cursor:pointer; transition:all .15s;
+        }
+        .dia-btn.ativo { background:var(--neon); border-color:var(--neon); color:#000; }
+        .horario-wrap { display:flex; align-items:center; gap:10px; }
+        .horario-wrap label { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+        .horario-wrap input[type="time"] {
+            flex:1; background:#111; border:1px solid var(--border);
+            border-radius:10px; color:#fff; padding:8px 12px;
+            font-size:14px; outline:none; color-scheme:dark;
+        }
+        .horario-wrap input[type="time"]:focus { border-color:var(--neon); }
+    </style>
+</head>
+<body style="padding-bottom:0;">
+    <div class="header">
+        <a href="dashboard.html" style="color:var(--neon);text-decoration:none;font-size:14px;">← Voltar</a>
+        <span class="header-title" style="font-size:18px;">Escanear Planta</span>
+        <div></div>
+    </div>
+
+    <div id="camera-area">
+        <video id="video" autoplay playsinline></video>
+        <img id="preview">
+        <div class="frame"></div>
+        <div class="frame-b" style="position:absolute;inset:40px;pointer-events:none;"></div>
+        <div class="laser" id="laser"></div>
+        <button id="btn-captura" onclick="capturar()"></button>
+        <label for="input-arquivo" id="btn-galeria" title="Carregar da galeria">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+            </svg>
+        </label>
+        <input type="file" id="input-arquivo" accept="image/*" style="display:none;" onchange="selecionarArquivo(event)">
+    </div>
+
+    <div id="analisando" style="display:none;text-align:center;padding:30px 20px;">
+        <div class="spinner" style="margin:0 auto 16px;"></div>
+        <p style="color:var(--neon);">Identificando planta...</p>
+    </div>
+
+    <div id="resultado">
+        <div class="card" style="margin-bottom:16px;">
+            <div class="row" style="margin-bottom:14px;">
+                <img id="foto-resultado" style="width:70px;height:70px;border-radius:12px;object-fit:cover;border:1.5px solid var(--border);">
+                <div>
+                    <div id="nome-planta" style="font-size:18px;font-weight:700;"></div>
+                    <div id="especie-planta" style="color:var(--text-muted);font-size:13px;"></div>
+                    <div id="confianca-planta" style="color:var(--neon);font-size:12px;margin-top:4px;"></div>
+                </div>
+            </div>
+
+            <div style="background:#111;border-radius:12px;padding:12px;margin-bottom:14px;">
+                <div class="muted" style="font-size:11px;margin-bottom:4px;">FREQUÊNCIA SUGERIDA PELA IA</div>
+                <div id="frequencia-planta" style="font-size:14px;"></div>
+            </div>
+
+            <div style="background:#111;border-radius:12px;padding:12px;margin-bottom:14px;" class="gap">
+                <div class="muted" style="font-size:11px;margin-bottom:8px;">DIAS DE REGA — edite se quiser</div>
+                <div class="dias-grid" id="dias-scan">
+                    <button type="button" class="dia-btn" data-dia="1" onclick="alternarDiaScan(1)">Seg</button>
+                    <button type="button" class="dia-btn" data-dia="2" onclick="alternarDiaScan(2)">Ter</button>
+                    <button type="button" class="dia-btn" data-dia="3" onclick="alternarDiaScan(3)">Qua</button>
+                    <button type="button" class="dia-btn" data-dia="4" onclick="alternarDiaScan(4)">Qui</button>
+                    <button type="button" class="dia-btn" data-dia="5" onclick="alternarDiaScan(5)">Sex</button>
+                    <button type="button" class="dia-btn" data-dia="6" onclick="alternarDiaScan(6)">Sáb</button>
+                    <button type="button" class="dia-btn" data-dia="7" onclick="alternarDiaScan(7)">Dom</button>
+                </div>
+
+                <div class="horario-wrap" style="margin-top:10px;">
+                    <label>Horário de rega:</label>
+                    <input type="time" id="horario-scan" value="08:00">
+                </div>
+            </div>
+
+            <div class="gap">
+                <button class="btn btn-primary" onclick="salvarNoJardim()">Adicionar ao jardim</button>
+                <button class="btn btn-outline" onclick="reiniciar()">Tentar novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script src="js/api.js"></script>
+    <script src="js/scan.js"></script>
+</body>
+</html>

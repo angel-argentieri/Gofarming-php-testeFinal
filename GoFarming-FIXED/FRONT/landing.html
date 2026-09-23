@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoFarming — O jardim inteiro, numa foto</title>
+
+    <!-- Fonte Google: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Estilo CSS principal -->
+    <link rel="stylesheet" href="css/landing.css?v=999">
+</head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="#topo" class="brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 6-4.5 11-10 11Z"/>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+                <span>GoFarming</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#bento">O app</a>
+                <a href="#fluxo">Fluxo</a>
+                <a href="#stack">Stack</a>
+            </nav>
+            <a href="login.html" class="btn-ghost">Entrar</a>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main id="topo">
+
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="hero-blob" aria-hidden="true"></div>
+            <span class="hero-tag">🌱 Identificação por IA em tempo real</span>
+            <h1 class="hero-title">
+                Toda planta<br>
+                tem uma <span class="word-swap"><b>espécie, </b><b>frequência e </b><b>história</b></span><br>
+                escondida.
+            </h1>
+            <p class="hero-sub">Tire a foto. O GoFarming descobre o nome, monta o calendário de rega e vira o especialista particular do seu jardim — inclusive quando você esquece dele.</p>
+            <div class="hero-actions">
+                <a href="cadastro.html" class="btn-solid">Criar meu jardim</a>
+                <a href="#bento" class="btn-line">Ver o app por dentro ↓</a>
+            </div>
+
+            <div class="proof-strip">
+                <div><strong>3s</strong><span>para identificar</span></div>
+                <div class="div-line" aria-hidden="true"></div>
+                <div><strong>0</strong><span>plantas esquecidas</span></div>
+                <div class="div-line" aria-hidden="true"></div>
+                <div><strong>24/7</strong><span>IA de plantão</span></div>
+            </div>
+        </section>
+
+        <!-- SHOWCASE (MOCKUP DO CELULAR) -->
+        <section class="showcase">
+            <div class="phone">
+                <div class="phone-notch" aria-hidden="true"></div>
+                <div class="phone-screen">
+                    <div class="ps-header">
+                        <div class="ps-avatar"></div>
+                        <div class="ps-greet">Olá, Jardineiro</div>
+                        <div class="ps-bell">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            </svg>
+                            <span class="ps-bell-dot"></span>
+                        </div>
+                    </div>
+                    <div class="ps-card ps-card-1">
+                        <div class="ps-thumb">🌿</div>
+                        <div class="ps-info">
+                            <strong>Costela-de-adão</strong>
+                            <em>Monstera deliciosa</em>
+                            <span class="ps-badge">💧 Regar hoje</span>
+                        </div>
+                    </div>
+                    <div class="ps-card ps-card-2">
+                        <div class="ps-thumb">🌵</div>
+                        <div class="ps-info">
+                            <strong>Espada-de-são-jorge</strong>
+                            <em>Sansevieria</em>
+                            <span class="ps-badge ps-badge-ok">✓ Em dia</span>
+                        </div>
+                    </div>
+                    <div class="ps-toast">
+                        <span class="ps-toast-dot"></span>
+                        <div>
+                            <strong>Hora de regar 💧</strong>
+                            <small>Costela-de-adão está esperando água</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-text">
+                <span class="section-num">01</span>
+                <h2>Não é só um app.<br>É o painel do seu jardim.</h2>
+                <p>Cada planta cadastrada vira um card vivo: espécie confirmada por IA, foto, frequência de rega calculada sob medida e um sino que avisa exatamente quando algo precisa de atenção — sem depender da sua memória.</p>
+            </div>
+        </section>
+
+        <!-- MARQUEE EM MOVIMENTO -->
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track">
+                <span>Costela-de-adão</span><span>Jiboia</span><span>Espada-de-são-jorge</span><span>Samambaia</span><span>Suculenta</span><span>Rosa</span><span>Orquídea</span><span>Hortelã</span>
+                <span>Costela-de-adão</span><span>Jiboia</span><span>Espada-de-são-jorge</span><span>Samambaia</span><span>Suculenta</span><span>Rosa</span><span>Orquídea</span><span>Hortelã</span>
+            </div>
+        </div>
+
+        <!-- RECURSOS (BENTO GRID) -->
+        <section class="bento" id="bento">
+            <div class="section-head">
+                <span class="section-num">02</span>
+                <h2>Um recurso para cada esquecimento</h2>
+            </div>
+
+            <div class="bento-grid">
+                <div class="bento-item bento-lg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <h3>Identificação por foto</h3>
+                    <p>Aponte a câmera para qualquer planta e receba nome, espécie e percentual de confiança em segundos.</p>
+                </div>
+                <div class="bento-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12Z"/></svg>
+                    <h3>Regas sob medida</h3>
+                    <p>Calendário de rega calculado para a espécie de cada planta.</p>
+                </div>
+                <div class="bento-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <h3>Notificações em tempo real</h3>
+                    <p>Sino no painel de controle e alertas diários sobre o que está pendente hoje.</p>
+                </div>
+                <div class="bento-item bento-tall">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <h3>Assistente com IA</h3>
+                    <p>Pergunte sobre iluminação, adubo ou pragas e receba uma resposta imediata e específica para a planta que você cadastrou — sem respostas genéricas da internet.</p>
+                </div>
+                <div class="bento-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+                    <h3>PWA instalável</h3>
+                    <p>Acesso direto do navegador, sem necessidade de baixar pela loja de aplicativos.</p>
+                </div>
+                <div class="bento-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+                    <h3>Painel único</h3>
+                    <p>Todas as plantas reunidas em um só lugar com acompanhamento visual simples.</p>
+                </div>
+            </div>
+        </section>
+
+  <!-- FLUXO -->
+        <section class="fluxo" id="fluxo">
+            <div class="section-head">
+                <span class="section-num">03</span>
+                <h2>Do zero ao jardim organizado</h2>
+            </div>
+            <div class="fluxo-track">
+                <div class="fstep">
+                    <span class="fnum">01</span>
+                    <h3>Cadastre-se</h3>
+                    <p>Conta pronta em menos de 30 segundos.</p>
+                </div>
+                <div class="fstep">
+                    <span class="fnum">02</span>
+                    <h3>Escaneie</h3>
+                    <p>A IA identifica a espécie diretamente pela foto.</p>
+                </div>
+                <div class="fstep">
+                    <span class="fnum">03</span>
+                    <h3>Receba o plano</h3>
+                    <p>Rega e cuidados calculados no mesmo instante.</p>
+                </div>
+                <div class="fstep">
+                    <span class="fnum">04</span>
+                    <h3>Monte seu jardim</h3>
+                    <p>Salve suas plantas e flores no seu jardim virtual personalizado.</p>
+                </div>
+                <div class="fstep">
+                    <span class="fnum">05</span>
+                    <h3>Acompanhe</h3>
+                    <p>Notificações, chat e status sempre à mão.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- STACK TÉCNICA -->
+        <section class="tech" id="stack">
+            <div class="section-head">
+                <span class="section-num">04</span>
+                <h2>Tecnologia por trás</h2>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-pill"><strong>PHP 8</strong><span>Backend MVC</span></div>
+                <div class="tech-pill"><strong>MySQL</strong><span>Banco de dados</span></div>
+                <div class="tech-pill"><strong>Gemini AI</strong><span>Chat inteligente</span></div>
+                <div class="tech-pill"><strong>Plant.id</strong><span>Identificação</span></div>
+                <div class="tech-pill"><strong>PWA</strong><span>Service Worker</span></div>
+                <div class="tech-pill"><strong>CSS puro</strong><span>Sem frameworks</span></div>
+            </div>
+        </section>
+
+        <!-- CTA FINAL -->
+        <section class="cta">
+            <div class="cta-blob" aria-hidden="true"></div>
+            <h2>Seu jardim não vai<br>se cuidar sozinho.<br><span>Mas agora tem quem lembre.</span></h2>
+            <a href="cadastro.html" class="btn-solid btn-lg">Criar minha conta grátis</a>
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="foot">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 6-4.5 11-10 11Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+            <span>GoFarming</span>
+        </div>
+        <p>Tecnologia para cuidar do que é vivo.</p>
+    
+    </footer>
+
+</body>
+</html>

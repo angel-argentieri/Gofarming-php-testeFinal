@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoFarming — Recuperar Senha</title>
+
+    <!-- Fonte Google: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Estilo CSS principal -->
+    <link rel="stylesheet" href="css/landing.css?v=1000">
+
+    <style>
+        /* Estilos específicos para a tela de Recuperação de Senha */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: var(--bg-dark);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            border: 1px solid var(--purple-border);
+            border-radius: 28px;
+            padding: 40px 32px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.6), 0 0 25px var(--purple-glow);
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-brand {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+
+        .auth-brand svg {
+            width: 38px;
+            height: 38px;
+            stroke: var(--purple-primary);
+            filter: drop-shadow(0 0 10px var(--purple-glow));
+        }
+
+        .auth-brand span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-title);
+        }
+
+        .auth-header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-title);
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--purple-border);
+            border-radius: 12px;
+            color: var(--text-title);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 12px var(--purple-glow);
+            background-color: rgba(168, 127, 251, 0.04);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(162, 155, 182, 0.4);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-footer {
+            margin-top: 28px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--purple-primary);
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <!-- LOGO DA MARCA -->
+        <a href="landing.html" class="auth-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+            <span>GoFarming</span>
+        </a>
+
+        <!-- CABEÇALHO -->
+        <div class="auth-header">
+            <h1>Recuperar Senha</h1>
+            <p>Digite seu e-mail cadastrado e enviaremos as instruções para você redefinir sua senha.</p>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <!-- FORMULÁRIO COM FEEDBACK VISUAL -->
+        <form class="auth-form" id="recoveryForm" onsubmit="handleRecovery(event)">
+            <div class="form-group">
+                <label for="email">E-mail de cadastro</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-solid auth-btn">Enviar link de recuperação</button>
+        </form>
+
+        <!-- MENSAGEM DE SUCESSO (INICIALMENTE OCULTA) -->
+        <div id="successMessage" style="display: none; margin-top: 20px; text-align: center;">
+            <div style="background: rgba(168, 127, 251, 0.1); border: 1px solid var(--purple-primary); padding: 16px; border-radius: 12px; color: var(--text-title); font-size: 0.9rem;">
+                🌱 <strong>E-mail enviado!</strong><br>
+                Verifique sua caixa de entrada e spam para redefinir sua senha.
+            </div>
+        </div>
+
+        <script>
+            function handleRecovery(event) {
+                event.preventDefault(); // Impede o recarregamento da página
+                
+                const btn = document.getElementById('submitBtn');
+                btn.innerText = 'Enviando...';
+                btn.style.opacity = '0.7';
+                btn.disabled = true;
+
+                // Simula o tempo de resposta do servidor (1.5s)
+                setTimeout(() => {
+                    document.getElementById('recoveryForm').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                }, 1500);
+            }
+        </script>
+
+</body>
+</html>

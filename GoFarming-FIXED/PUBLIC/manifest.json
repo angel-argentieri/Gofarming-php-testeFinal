@@ -1,0 +1,23 @@
+{
+    "name": "GoFarming",
+    "short_name": "GoFarming",
+    "start_url": "/gofarming/FRONT/dashboard.html",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#B8A8FF",
+    "icons": [
+        {
+            "src": "/gofarming/FRONT/css/Logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/gofarming/FRONT/css/Logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "scope": "/gofarming/"
+}
