@@ -16,7 +16,7 @@ class Database {
     private $host     = 'localhost';
     private $dbname   = 'GoFarmingBD';
     private $username = 'root';
-    private $password = '';
+    private $password = '12345678';
     private $pdo;
 
     public function __construct() {

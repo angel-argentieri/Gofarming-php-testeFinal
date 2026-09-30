@@ -4,43 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar conta — GoFarming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="manifest" href="/gofarming/PUBLIC/manifest.json">
-    <meta name="theme-color" content="#2e7d32">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="GoFarming">
-    <link rel="apple-touch-icon" href="/gofarming/FRONT/css/Logo.png">
+    <style>
+        body {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px; background-color: var(--bg-main) !important;
+        }
+        .auth-container {
+            width: 100%; max-width: 400px;
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-card) !important;
+            border-radius: 32px !important; padding: 40px 32px !important;
+            box-shadow: var(--shadow-elevated) !important;
+            backdrop-filter: blur(20px); text-align: center;
+            animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .auth-brand { display: inline-flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 24px; text-decoration: none; }
+        .auth-brand svg { width: 42px; height: 42px; stroke: var(--purple-primary); }
+        .auth-brand span { font-size: 1.6rem; font-weight: 800; color: var(--text-title); }
+        .auth-header h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 6px; color: var(--text-title); }
+        .auth-header p  { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
+        .auth-form { display: flex; flex-direction: column; gap: 18px; text-align: left; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        .form-group input {
+            width: 100%; padding: 14px 18px; background: var(--bg-input) !important;
+            border: 1.5px solid var(--border-card) !important; border-radius: 16px !important;
+            color: var(--text-title) !important; font-size: 0.95rem; font-weight: 500;
+            outline: none; transition: all 0.25s ease;
+        }
+        .form-group input:focus { border-color: var(--purple-primary) !important; box-shadow: 0 0 0 4px var(--purple-subtle-glow) !important; }
+        .auth-btn {
+            width: 100%; padding: 16px; margin-top: 8px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-hover)) !important;
+            color: #ffffff !important; border: none; border-radius: 16px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            box-shadow: var(--shadow-purple-btn); transition: all 0.25s ease;
+        }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -4px rgba(139, 92, 246, 0.55); }
+        .auth-footer { margin-top: 24px; font-size: 0.875rem; color: var(--text-muted); }
+        .auth-footer a { color: var(--purple-primary); font-weight: 700; text-decoration: none; margin-left: 4px; }
+        .auth-footer a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body class="auth-page">
-    <div class="auth-card">
+    <div class="auth-container">
+        <a href="landing.html" class="auth-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+            <span>GoFarming</span>
+        </a>
+
         <div class="auth-header">
-            <img src="css/Logo.png" alt="GoFarming" class="auth-logo">
-            <h1 class="auth-title">Criar Conta</h1>
-            <p class="auth-subtitle">Junte-se ao GoFarming e cuide das suas plantas</p>
+            <h1>Criar Conta</h1>
+            <p>Junte-se ao GoFarming e cuide das suas plantas</p>
         </div>
 
         <form class="auth-form" onsubmit="cadastrar(); return false;">
-            <div class="input-field">
+            <div class="form-group">
                 <label for="nome">Nome</label>
-                <input class="input" id="nome" type="text" placeholder="Seu nome completo" required>
+                <input id="nome" type="text" placeholder="Seu nome completo" required>
             </div>
-            <div class="input-field">
+            <div class="form-group">
                 <label for="email">E-mail</label>
-                <input class="input" id="email" type="email" placeholder="seu@email.com" required autocomplete="email">
+                <input id="email" type="email" placeholder="seu@email.com" required autocomplete="email">
             </div>
-            <div class="input-field">
+            <div class="form-group">
                 <label for="senha">Senha</label>
-                <input class="input" id="senha" type="password" placeholder="••••••••" required autocomplete="new-password">
+                <input id="senha" type="password" placeholder="••••••••" required autocomplete="new-password">
             </div>
 
-            <button type="submit" class="btn btn-primary">Criar conta</button>
-
-            <div class="auth-footer">
-                <span>Já tem uma conta?</span>
-                <a href="login.html">Entrar</a>
-            </div>
+            <button type="submit" class="auth-btn">Criar conta</button>
         </form>
+
+        <div class="auth-footer">
+            Já tem uma conta? <a href="login.html">Entrar</a>
+        </div>
     </div>
 
     <script src="js/api.js"></script>

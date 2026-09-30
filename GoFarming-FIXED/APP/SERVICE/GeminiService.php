@@ -8,7 +8,7 @@ class GeminiService {
     public function __construct() {
         $this->apiKey = defined('GEMINI_KEY') ? trim(GEMINI_KEY) : '';
         $modelConfigurado = defined('GEMINI_MODEL') ? trim(GEMINI_MODEL) : '';
-        // O modelo 2.0 Flash foi descontinuado; migra automaticamente configurações antigas.
+        
         $this->model = ($modelConfigurado === '' || $modelConfigurado === 'gemini-2.0-flash')
             ? 'gemini-3.6-flash'
             : $modelConfigurado;
@@ -71,6 +71,8 @@ class GeminiService {
             CURLOPT_POSTFIELDS     => json_encode($body, JSON_UNESCAPED_UNICODE),
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ]);
 
         $resposta = curl_exec($ch);

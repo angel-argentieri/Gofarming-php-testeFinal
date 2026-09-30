@@ -1,162 +1,168 @@
-let dadosPlanta = null;
-let fotoBase64  = null;
-let diasScan    = [];
+let stream = null;
+let imagemCapturadaBase64 = null;
+let diasSelecionados = [1, 3, 5]; // Padrão: Seg, Qua, Sex
 
-navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(stream => {
-        document.getElementById('video').srcObject = stream;
-    })
-    .catch(() => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.capture = 'environment';
-        input.style = 'display:none';
-        input.onchange = e => processarArquivo(e.target.files[0]);
-        document.body.appendChild(input);
-        document.getElementById('btn-captura').onclick = () => input.click();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    iniciarCamera();
+});
 
-function capturar() {
-    const video  = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if (!video.videoWidth || !video.videoHeight) {
-        toast('A câmera ainda não está pronta. Tente novamente em alguns segundos.');
-        return;
-    }
-    const escala = Math.min(1, 1600 / Math.max(video.videoWidth, video.videoHeight));
-    canvas.width  = Math.round(video.videoWidth * escala);
-    canvas.height = Math.round(video.videoHeight * escala);
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    fotoBase64 = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
-    mostrarPreview(canvas.toDataURL('image/jpeg', 0.75));
-    analisar();
-}
-
-function selecionarArquivo(e) {
-    if (e.target.files && e.target.files[0]) processarArquivo(e.target.files[0]);
-}
-
-function processarArquivo(file) {
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-        toast('Selecione um arquivo de imagem.');
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-        const imagem = new Image();
-        imagem.onload = () => {
-            const limite = 1600;
-            const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
-            const canvas = document.getElementById('canvas');
-            canvas.width = Math.round(imagem.width * escala);
-            canvas.height = Math.round(imagem.height * escala);
-            canvas.getContext('2d').drawImage(imagem, 0, 0, canvas.width, canvas.height);
-            const jpeg = canvas.toDataURL('image/jpeg', 0.82);
-            fotoBase64 = jpeg.split(',')[1];
-            mostrarPreview(jpeg);
-            analisar();
-        };
-        imagem.onerror = () => toast('Não foi possível abrir essa imagem.');
-        imagem.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function mostrarPreview(src) {
-    ['laser','btn-captura','btn-galeria'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
-    document.getElementById('video').style.display = 'none';
-    const preview = document.getElementById('preview');
-    preview.src = src;
-    preview.style.display = 'block';
-}
-
-async function analisar() {
-    document.getElementById('analisando').style.display = 'block';
-    let res;
+// Inicializa a câmera do dispositivo
+async function iniciarCamera() {
+    const video = document.getElementById('video');
     try {
-        res = await post('identificar', { imagem: fotoBase64 });
-    } catch (e) {
-        res = { error: 'Falha ao enviar a imagem. Verifique sua conexão e tente novamente.' };
-    } finally {
-        document.getElementById('analisando').style.display = 'none';
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+        });
+        video.srcObject = stream;
+    } catch (erro) {
+        console.warn('Câmera indisponível ou permissão negada:', erro);
     }
+}
 
-    if (res.error) {
-        toast(res.error);
-        reiniciar();
+// Interrompe a transmissão da câmera
+function pararCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+}
+
+// Tira foto via canvas
+function capturar() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+
+    if (!video.srcObject) {
+        alert('A câmera não está ativa. Tente enviar uma imagem da galeria.');
         return;
     }
 
-    dadosPlanta = res;
-    dadosPlanta.foto_base64 = fotoBase64;
-    diasScan = Array.isArray(res.dias_semana) ? [...res.dias_semana] : [1, 4];
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 640;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    document.getElementById('foto-resultado').src      = 'data:image/jpeg;base64,' + fotoBase64;
-    document.getElementById('nome-planta').textContent      = res.nome;
-    document.getElementById('especie-planta').textContent   = res.especie;
-    document.getElementById('confianca-planta').textContent = res.confianca + '% de certeza';
-    document.getElementById('frequencia-planta').textContent = res.frequencia_rega;
+    imagemCapturadaBase64 = canvas.toDataURL('image/jpeg');
+    
+    // Exibe preview
+    preview.src = imagemCapturadaBase64;
+    video.style.display = 'none';
+    preview.style.display = 'block';
 
-    renderizarDiasScan();
-    document.getElementById('resultado').style.display = 'block';
+    processarImagem(imagemCapturadaBase64);
 }
 
-function renderizarDiasScan() {
-    document.querySelectorAll('#dias-scan .dia-btn').forEach(btn => {
-        btn.classList.toggle('ativo', diasScan.includes(+btn.dataset.dia));
-    });
+// Carrega foto da galeria
+function selecionarArquivo(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        imagemCapturadaBase64 = e.target.result;
+        
+        const video = document.getElementById('video');
+        const preview = document.getElementById('preview');
+
+        pararCamera();
+        video.style.display = 'none';
+        preview.src = imagemCapturadaBase64;
+        preview.style.display = 'block';
+
+        processarImagem(imagemCapturadaBase64);
+    };
+    reader.readAsDataURL(arquivo);
 }
 
-function alternarDiaScan(dia) {
-    dia = +dia;
-    diasScan = diasScan.includes(dia)
-        ? diasScan.filter(d => d !== dia)
-        : [...diasScan, dia].sort((a, b) => a - b);
-    renderizarDiasScan();
-}
-
-async function salvarNoJardim() {
-    if (!diasScan.length) {
-        toast('Escolha pelo menos um dia de rega.');
-        return;
-    }
-
-    const horario = document.getElementById('horario-scan').value || '08:00';
-
-    const res = await post('plantas', {
-        nome:             dadosPlanta.nome,
-        especie:          dadosPlanta.especie,
-        foto_url:         'data:image/jpeg;base64,' + dadosPlanta.foto_base64,
-        frequencia_rega:  dadosPlanta.frequencia_rega,
-        vezes_por_semana: diasScan.length,
-        dias_semana:      diasScan,
-        horario_rega:     horario,
-        access_token:     dadosPlanta.access_token,
-    });
-
-    if (res.error) {
-        toast(res.error);
-        return;
-    }
-
-    toast('Planta adicionada ao jardim!');
-    setTimeout(() => window.location.href = 'dashboard.html', 1500);
-}
-
-function reiniciar() {
-    dadosPlanta = null;
-    fotoBase64  = null;
-    diasScan    = [];
+// Processa e simula/envia a imagem para análise de IA
+function processarImagem(base64Data) {
+    document.querySelector('.capture-wrapper').style.display = 'none';
+    document.getElementById('analisando').style.display = 'block';
     document.getElementById('resultado').style.display = 'none';
+
+    // Simulação de resposta da IA (Substitua por chamada API real se houver)
+    setTimeout(() => {
+        exibirResultado({
+            nome: 'Costela-de-Adão',
+            especie: 'Monstera deliciosa',
+            confianca: '98% de precisão',
+            frequencia: 'Regar 2 a 3 vezes por semana',
+            diasSugeridos: [1, 3, 5]
+        });
+    }, 1800);
+}
+
+// Exibe o resultado na tela
+function exibirResultado(dados) {
+    document.getElementById('analisando').style.display = 'none';
+    document.getElementById('resultado').style.display = 'block';
+
+    document.getElementById('foto-resultado').src = imagemCapturadaBase64;
+    document.getElementById('nome-planta').textContent = dados.nome;
+    document.getElementById('especie-planta').textContent = dados.especie;
+    document.getElementById('confianca-planta').textContent = dados.confianca;
+    document.getElementById('frequencia-planta').textContent = dados.frequencia;
+
+    diasSelecionados = dados.diasSugeridos;
+    atualizarBotoesDias();
+}
+
+// Alterna seleção dos dias da semana
+function alternarDiaScan(dia) {
+    const index = diasSelecionados.indexOf(dia);
+    if (index > -1) {
+        diasSelecionados.splice(index, 1);
+    } else {
+        diasSelecionados.push(dia);
+    }
+    atualizarBotoesDias();
+}
+
+function atualizarBotoesDias() {
+    const botoes = document.querySelectorAll('#dias-scan .dia-btn');
+    botoes.forEach(btn => {
+        const diaNum = parseInt(btn.getAttribute('data-dia'), 10);
+        if (diasSelecionados.includes(diaNum)) {
+            btn.classList.add('ativo');
+        } else {
+            btn.classList.remove('ativo');
+        }
+    });
+}
+
+// Salva e redireciona para o dashboard
+function salvarNoJardim() {
+    const horario = document.getElementById('horario-scan').value;
+    const nome = document.getElementById('nome-planta').textContent;
+
+    const novaPlanta = {
+        nome: nome,
+        especie: document.getElementById('especie-planta').textContent,
+        imagem: imagemCapturadaBase64,
+        dias: diasSelecionados,
+        horario: horario
+    };
+
+    // Salva no localStorage para persistência local
+    let jardim = JSON.parse(localStorage.getItem('jardim_gofarming') || '[]');
+    jardim.push(novaPlanta);
+    localStorage.setItem('jardim_gofarming', JSON.stringify(jardim));
+
+    alert(`${nome} adicionada ao seu jardim com sucesso!`);
+    window.location.href = 'dashboard.html';
+}
+
+// Reinicia o scanner
+function reiniciar() {
+    pararCamera();
+    imagemCapturadaBase64 = null;
+
     document.getElementById('preview').style.display = 'none';
     document.getElementById('video').style.display = 'block';
-    document.getElementById('laser').style.display = 'block';
-    document.getElementById('btn-captura').style.display = 'flex';
-    const btnGaleria = document.getElementById('btn-galeria');
-    if (btnGaleria) btnGaleria.style.display = 'flex';
+    document.querySelector('.capture-wrapper').style.display = 'flex';
+    document.getElementById('resultado').style.display = 'none';
+    document.getElementById('analisando').style.display = 'none';
+
+    iniciarCamera();
 }

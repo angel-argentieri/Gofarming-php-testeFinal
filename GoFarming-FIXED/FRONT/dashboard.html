@@ -6,48 +6,43 @@
     <title>Jardim — GoFarming</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="manifest" href="/gofarming/PUBLIC/manifest.json">
-    <!-- PWA Settings -->
-    <meta name="theme-color" content="#2e7d32">
+    <meta name="theme-color" content="#8b5cf6">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="GoFarming">
-    <link rel="apple-touch-icon" href="/gofarming/FRONT/css/Logo.png">
+    <link rel="apple-touch-icon" href="css/Logo.png">
 </head>
 <body class="dashboard-page">
 
-    
-<header class="header" style="position:relative;">
-    <div class="header-brand">
-        <img src="css/Logo.png" alt="GoFarming" class="header-logo">
-        <div class="header-info">
-            
-            <div class="muted" id="saudacao">Olá, Jardineiro</div>
-        </div>
-    </div>
-    <div class="sino-wrap">
-        <button id="sino" class="btn-sino" onclick="alternarPainel()" aria-label="Notificações">
-            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 01-3.46 0"/>
-            </svg>
-            <span id="sino-badge"></span>
-        </button>
-
-        <div id="painel-notificacoes" class="painel-notificacoes">
-            <div class="painel-cabecalho">
-                <span>Notificações</span>
-                <button onclick="marcarTodasLidas()">Marcar todas como lidas</button>
+    <header class="header" style="position:relative;">
+        <div class="header-brand">
+            <img src="css/Logo.png" alt="GoFarming" class="header-logo">
+            <div class="header-info">
+                <div class="muted" id="saudacao">Olá, Jardineiro</div>
             </div>
-            <div id="painel-corpo"></div>
         </div>
-    </div>
+        <div class="sino-wrap">
+            <button id="sino" class="btn-sino" onclick="alternarPainel()" aria-label="Notificações">
+                <svg width="20" height="20" fill="none" stroke="var(--purple-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span id="sino-badge"></span>
+            </button>
 
-    <button onclick="sair()" class="btn-sair">Sair</button>
-</header>
+            <div id="painel-notificacoes" class="painel-notificacoes">
+                <div class="painel-cabecalho">
+                    <span>Notificações</span>
+                    <button onclick="marcarTodasLidas()">Marcar todas como lidas</button>
+                </div>
+                <div id="painel-corpo"></div>
+            </div>
+        </div>
 
-   
+        <button onclick="sair()" class="btn-sair">Sair</button>
+    </header>
+
     <main class="page">
-        
         <div class="summary-card">
             <div class="summary-title-row">
                 <h3>Seu Jardim</h3>
@@ -59,7 +54,6 @@
             <p>Acompanhe o status e regas das suas plantas</p>
         </div>
 
-     
         <div id="lista" class="gap">
             <div class="empty-state">
                 <span>Carregando plantas...</span>
@@ -67,7 +61,6 @@
         </div>
     </main>
 
-    
     <nav class="bottom-nav">
         <a href="dashboard.html" class="nav-item ativo">
             <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">

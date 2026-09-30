@@ -1,9 +1,6 @@
 <?php
 /**
- * Tarefa diária do GoFarming.
- *
- * Linux/macOS (todo dia às 8h):
- *   0 8 * * * /usr/bin/php /caminho/para/gofarming/cron_notificacao.php >> /var/log/gofarming.log 2>&1
+
  *
  * Windows / XAMPP — Agendador de Tarefas:
  *   Programa:    C:\xampp\php\php.exe
@@ -21,7 +18,7 @@ $modelRega        = new RegaModel($db);
 $modelPlanta      = new PlantaModel($db);
 $modelNotificacao = new NotificacaoModel($db);
 
-// Renova agendas com horizonte curto
+
 $stmt = $db->query("
     SELECT p.id, p.dias_semana
     FROM Plantas p

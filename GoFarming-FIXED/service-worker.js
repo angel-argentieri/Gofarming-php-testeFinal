@@ -71,10 +71,7 @@ self.addEventListener('fetch', e => {
 });
 
 
-/* ===================== Notificações ===================== */
 
-// Clique na notificação: foca uma aba já aberta do app em vez de abrir
-// uma nova a cada toque, e navega direto para a planta quando houver ID.
 self.addEventListener('notificationclick', e => {
   e.notification.close();
 

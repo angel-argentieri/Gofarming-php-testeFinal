@@ -1,5 +1,6 @@
 <?php
 
+ob_start();
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 error_reporting(E_ALL);
@@ -33,11 +34,12 @@ $view = new JsonView();
 $uri    = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $script = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
 
-if ($script !== '/' && strpos($uri, $script) === 0) {
+if ($script !== '/' && $script !== '.' && stripos($uri, $script) === 0) {
     $uri = substr($uri, strlen($script));
 }
+
+$uri    = preg_replace('#^/index\.php#i', '', $uri);
 $rota   = trim($uri, '/');
-$rota   = preg_replace('#^index\.php/?#', '', $rota);
 $rota   = $_GET['rota'] ?? $rota;
 $metodo = $_SERVER['REQUEST_METHOD'];
 

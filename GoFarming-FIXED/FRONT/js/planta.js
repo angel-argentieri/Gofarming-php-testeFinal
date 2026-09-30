@@ -1,187 +1,160 @@
-const params     = new URLSearchParams(window.location.search);
-const id_planta  = params.get('id');
+const urlParams = new URLSearchParams(window.location.search);
+const plantaId = urlParams.get('id');
 
-let rega_id         = null;
+if (!plantaId) {
+    window.location.href = 'dashboard.html';
+}
+
 let diasSelecionados = [];
-let historicoChat   = [];
 
-const NOMES_DIAS = { 1:'Seg', 2:'Ter', 3:'Qua', 4:'Qui', 5:'Sex', 6:'Sáb', 7:'Dom' };
-
-function formatarFoto(foto) {
-    if (!foto) return 'css/Logo.png';
-    if (foto.startsWith('data:image') || foto.startsWith('http')) return foto;
-    return 'data:image/jpeg;base64,' + foto;
-}
-
-function formatarData(iso) {
-    const [a, m, d] = iso.split('-');
-    const data   = new Date(+a, +m - 1, +d);
-    const semana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][data.getDay()];
-    return `${semana}, ${d}/${m}`;
-}
-
-async function carregar() {
+async function carregarDetalhes() {
     const plantas = await get('plantas');
+    if (!plantas || plantas.error) return;
 
-    if (plantas.error || !Array.isArray(plantas)) {
-        toast(plantas.error || 'Não foi possível carregar.');
-        return;
-    }
-
-    const planta = plantas.find(p => p.id == id_planta);
-
+    const planta = plantas.find(p => p.id == plantaId);
     if (!planta) {
+        alert('Planta não encontrada');
         window.location.href = 'dashboard.html';
         return;
     }
 
-    document.title = planta.nome + ' — GoFarming';
-    document.getElementById('nome').textContent      = planta.nome;
-    document.getElementById('especie').textContent   = planta.especie || '';
-    document.getElementById('frequencia').textContent = planta.frequencia_rega || 'Não definida';
-    document.getElementById('foto').src              = formatarFoto(planta.foto_url);
-
-    if (planta.rega_hoje === 'pendente') {
-        rega_id = planta.rega_id;
-        document.getElementById('rega-hoje').style.display = 'block';
+    document.getElementById('nome').textContent = planta.nome || 'Sem nome';
+    document.getElementById('especie').textContent = planta.especie || '';
+    document.getElementById('frequencia').textContent = planta.frequencia_rega || 'Regar conforme necessário';
+    
+    const fotoElem = document.getElementById('foto');
+    if (planta.foto_url) {
+        fotoElem.src = planta.foto_url.startsWith('data:') || planta.foto_url.startsWith('http') 
+            ? planta.foto_url 
+            : 'data:image/jpeg;base64,' + planta.foto_url;
+    } else {
+        fotoElem.src = 'css/Logo.png';
     }
 
-    await carregarAgenda();
+    carregarAgenda();
 }
 
 async function carregarAgenda() {
-    const ag = await get('agenda?id_planta=' + encodeURIComponent(id_planta));
+    const res = await get('agenda?planta_id=' + plantaId);
+    if (!res || res.error) return;
 
-    if (ag.error) {
-        toast(ag.error);
-        return;
+    diasSelecionados = (res.dias || []).map(Number);
+    if (res.horario) {
+        document.getElementById('horario-rega').value = res.horario;
     }
 
-    diasSelecionados = ag.dias_semana || [];
-
-    if (ag.horario_rega) {
-        document.getElementById('horario-rega').value = ag.horario_rega;
-    }
-
-    renderizarDias();
-
-    const lista = document.getElementById('proximas-regas');
-    lista.innerHTML = (ag.proximas || []).length
-        ? ag.proximas.map(r => `
-            <div class="linha-rega">
-                <span>${formatarData(r.data_prevista)}</span>
-                <span class="${r.status === 'concluida' ? 'ok' : 'pend'}">
-                    ${r.status === 'concluida' ? '✓ regada' : '💧 pendente'}
-                </span>
-            </div>`).join('')
-        : '<div class="muted" style="font-size:13px;">Nenhuma rega agendada.</div>';
+    atualizarBotoesDias();
+    renderizarProximasRegas(res.proximas || []);
 }
 
-function renderizarDias() {
+function atualizarBotoesDias() {
     document.querySelectorAll('.dia-btn').forEach(btn => {
-        btn.classList.toggle('ativo', diasSelecionados.includes(+btn.dataset.dia));
+        const dia = Number(btn.getAttribute('data-dia'));
+        if (diasSelecionados.includes(dia)) {
+            btn.classList.add('ativo');
+        } else {
+            btn.classList.remove('ativo');
+        }
     });
 }
 
 function alternarDia(dia) {
-    dia = +dia;
-    diasSelecionados = diasSelecionados.includes(dia)
-        ? diasSelecionados.filter(d => d !== dia)
-        : [...diasSelecionados, dia].sort((a, b) => a - b);
-    renderizarDias();
+    const diaNum = Number(dia);
+    const pos = diasSelecionados.indexOf(diaNum);
+    if (pos > -1) {
+        diasSelecionados.splice(pos, 1);
+    } else {
+        diasSelecionados.push(diaNum);
+    }
+    atualizarBotoesDias();
 }
 
 async function salvarAgenda() {
-    if (!diasSelecionados.length) {
-        toast('Escolha pelo menos um dia.');
-        return;
-    }
-
-    const horario = document.getElementById('horario-rega').value || '08:00';
-
+    const horario = document.getElementById('horario-rega').value;
     const res = await post('agenda', {
-        id_planta,
-        dias_semana:  diasSelecionados,
-        horario_rega: horario,
+        planta_id: plantaId,
+        dias: diasSelecionados,
+        horario: horario
     });
 
-    if (res.error) {
-        toast(res.error);
+    if (res && res.success) {
+        alert('Agenda salva com sucesso!');
+        carregarAgenda();
+    } else {
+        alert(res.error || 'Erro ao salvar agenda');
+    }
+}
+
+function renderizarProximasRegas(proximas) {
+    const container = document.getElementById('proximas-regas');
+    if (!proximas || !proximas.length) {
+        container.innerHTML = '<div class="muted" style="font-size:12px;padding:8px 0;">Nenhuma rega agendada.</div>';
         return;
     }
 
-    toast('Agenda salva! 🗓️');
-    await carregarAgenda();
+    container.innerHTML = proximas.map(item => `
+        <div class="linha-rega">
+            <span>${item.data_formatada} (${item.dia_semana})</span>
+            <span class="${item.status === 'realizada' ? 'ok' : 'pend'}">
+                ${item.status === 'realizada' ? '✓ Regado' : '💧 Pendente'}
+            </span>
+        </div>
+    `).join('');
 }
 
 async function regar() {
-    const res = await post('regar', { id_rega: rega_id });
-
-    if (res.error) {
-        toast(res.error);
-        return;
+    const res = await post('regar', { planta_id: plantaId });
+    if (res && res.success) {
+        alert('Rega registrada com sucesso!');
+        location.reload();
+    } else {
+        alert(res.error || 'Erro ao registrar rega');
     }
-
-    document.getElementById('rega-hoje').style.display = 'none';
-    toast('Rega registrada! 💧');
-    carregarAgenda();
-}
-
-function adicionarMensagem(papel, texto) {
-    const box = document.getElementById('chat-mensagens');
-    const div = document.createElement('div');
-    div.className = papel === 'ia' ? 'msg-ia' : 'msg-usuario';
-    div.textContent = texto;
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
-    return div;
-}
-
-async function perguntarIA(pergunta) {
-    pergunta = (pergunta || '').trim();
-    if (!pergunta) return;
-
-    const input = document.getElementById('chat-input');
-    if (input) input.value = '';
-
-    document.getElementById('chat-mensagens').style.display = 'flex';
-    adicionarMensagem('usuario', pergunta);
-
-    const carregando = adicionarMensagem('ia', 'Pensando...');
-
-    const res = await post('chat', {
-        id_planta,
-        pergunta,
-        historico: historicoChat.slice(-6),
-    });
-
-    if (res.error) {
-        carregando.textContent = res.error;
-        carregando.classList.add('msg-erro');
-        return;
-    }
-
-    carregando.textContent = res.resposta;
-    historicoChat.push({ papel: 'usuario', texto: pergunta });
-    historicoChat.push({ papel: 'ia',      texto: res.resposta });
-}
-
-function enviarPergunta(e) {
-    if (e) e.preventDefault();
-    perguntarIA(document.getElementById('chat-input').value);
 }
 
 async function removerPlanta() {
-    if (!confirm('Remover esta planta do jardim?')) return;
-
-    const res = await del('plantas', { id: id_planta });
-
-    if (res.error) {
-        toast(res.error);
-        return;
+    if (!confirm('Deseja realmente remover esta planta do seu jardim?')) return;
+    const res = await del('plantas', { id: plantaId });
+    if (res && res.success) {
+        window.location.href = 'dashboard.html';
+    } else {
+        alert(res.error || 'Erro ao remover planta');
     }
-
-    window.location.href = 'dashboard.html';
 }
 
-carregar();
+async function perguntarIA(pergunta) {
+    const chatDiv = document.getElementById('chat-mensagens');
+    chatDiv.style.display = 'flex';
+
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg-usuario';
+    userMsg.textContent = pergunta;
+    chatDiv.appendChild(userMsg);
+
+    const iaMsg = document.createElement('div');
+    iaMsg.className = 'msg-ia';
+    iaMsg.textContent = 'Pensando...';
+    chatDiv.appendChild(iaMsg);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    const res = await post('chat', { planta_id: plantaId, mensagem: pergunta });
+
+    if (res && res.resposta) {
+        iaMsg.textContent = res.resposta;
+    } else {
+        iaMsg.className = 'msg-ia msg-erro';
+        iaMsg.textContent = res.error || 'Não foi possível obter resposta no momento.';
+    }
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+function enviarPergunta(e) {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const txt = input.value.trim();
+    if (!txt) return;
+    input.value = '';
+    perguntarIA(txt);
+}
+
+carregarDetalhes();
